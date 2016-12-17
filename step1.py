@@ -23,16 +23,7 @@ def sparse_subspace_communities_with_fusion(dataset_path, sigma):
     return S
 
 
-def Find_Geodesic_Distances(A):
-    n = A.ndim
-    M = numpy.zeros((n, n))
-    M = FloydWarshall(A, show=1)
-    return M
-
-
-def FloydWarshall(G, show=0):
-    # assert len(G) == len(G[0])
-    M = G
+def Find_Geodesic_Distances(M):
     D = []
     n = len(M)
     D.append(M)
