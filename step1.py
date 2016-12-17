@@ -59,14 +59,14 @@ def FloydWarshall(G, show=0):
                         current[i][j] = value2 + value1
 
         D[len(D)-1] = numpy.mat(current)
-    print "APSP (k=%d):" % k
+    print("APSP (k=%d):" % k)
     printGraph(D[len(D)-1])
     return D[len(D)-1]
 
 
 def printGraph(G):
     for row in G:
-        print row
+        print(row)
 
 #
 # x = 0

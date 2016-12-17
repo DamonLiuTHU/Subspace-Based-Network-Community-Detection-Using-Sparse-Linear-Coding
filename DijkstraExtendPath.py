@@ -33,7 +33,7 @@ class Dijkstra():
                     self.S[position - 1] = True
                 position = vertex + 1
             except:
-                print "Erro - Without shortest path, please check the vertex and weights"
+                print("Erro - Without shortest path, please check the vertex and weights")
                 self.S[self.end - 1] = True
 
     def calculate_weight(self, position):
@@ -131,7 +131,7 @@ class Dijkstra():
 
 
 if __name__ == '__main__':
-    print "Exemplo 1 - Graph"
+    print("Exemplo 1 - Graph")
     graph = {
         1: {2: 1, 4: 3},
         2: {1: 1, 4: 1, 3: 5},
@@ -142,14 +142,14 @@ if __name__ == '__main__':
     }
 
     for value in range(1, len(graph) + 1):
-        print value, graph.get(value)
+        print(value, graph.get(value))
 
-    print "\n"
-    print "Start: %s \nEnd: %s" % (1, 6)
+    print("\n")
+    print("Start: %s \nEnd: %s" % (1, 6))
     dijkstra = Dijkstra(graph, 1, 6)
     dijkstra.calculate_preds()
     dijkstra.calculate_shortest_path()
-    print "Preds   : %s" % (dijkstra.Preds)
-    print "Weights : %s" % (dijkstra.weights)
-    print "Shortest path : %s" % (dijkstra.shortest_path)
+    print("Preds   : %s" % (dijkstra.Preds))
+    print("Weights : %s" % (dijkstra.weights))
+    print("Shortest path : %s" % (dijkstra.shortest_path))
     dijkstra.show_graph()
