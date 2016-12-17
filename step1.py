@@ -1,15 +1,15 @@
 import Tools
 import math
 import numpy
-from geographiclib.geodesic import Geodesic
+
+
+# from geographiclib.geodesic import Geodesic
 
 
 # dataset is A
 def sparse_subspace_communities_with_fusion(dataset_path, sigma):
-    A = Tools.get_data_from_file(dataset_path)
-    matrix_from_igraph = A.get_adjacency()._data
-    matrix_from_numpy = numpy.mat(matrix_from_igraph, dtype=int)
-    P = Find_Geodesic_Distances(matrix_from_numpy)
+    matrix = Tools.get_adjacent_matrix(dataset_path)
+    P = Find_Geodesic_Distances(matrix)
     P = P * P
     S = -P / (2 * sigma ** 2)
 
@@ -17,7 +17,7 @@ def sparse_subspace_communities_with_fusion(dataset_path, sigma):
     width = len(S)
     for i in range(width):
         for j in range(width):
-            tmp = S[i][j]
+            # tmp = S[i][j]
             S[i][j] = math.exp(S[i][j])
     S = numpy.mat(S)
     return S
@@ -58,5 +58,6 @@ def Find_Geodesic_Distances(M):
 def print_graph(G):
     for row in G:
         print row
+
 
 sparse_subspace_communities_with_fusion('./data/football.gml', 10)
