@@ -1,5 +1,6 @@
 import numpy
 from igraph import *
+import networkx as nx
 
 def get_data_from_file(path):
     g = Graph.Read_GML(path)
@@ -7,7 +8,9 @@ def get_data_from_file(path):
 
 
 def get_adjacent_matrix(path):
-    graph = get_data_from_file(path)
+    # graph = get_data_from_file(path)
+    file = open(path,'r')
+    graph = nx.read_gml(file)
     tmp = numpy.mat(graph.get_adjacency())
     print type(tmp)
     return tmp

@@ -23,16 +23,7 @@ def sparse_subspace_communities_with_fusion(dataset_path, sigma):
     return S
 
 
-def Find_Geodesic_Distances(A):
-    n = A.ndim
-    M = numpy.zeros((n, n))
-    M = FloydWarshall(A, show=1)
-    return M
-
-
-def FloydWarshall(G, show=0):
-    # assert len(G) == len(G[0])
-    M = G
+def Find_Geodesic_Distances(M):
     D = []
     n = len(M)
     D.append(M)
@@ -52,34 +43,20 @@ def FloydWarshall(G, show=0):
                 value1 = previous[i][k - 1]  # from i to k
                 value2 = previous[k - 1][j]  # from k to j
 
-                if value1 != 0 and value2 != 0: # if there is an edge from i to k and k to j then there is edge from i to j
+                if value1 != 0 and value2 != 0:  # if there is an edge from i to k and k to j then there is edge from i to j
                     if current[i][j] != 0:
                         current[i][j] = min(current[i][j], value2 + value1)
-                    else: # this means previously there is no edge from i to j
+                    else:  # this means previously there is no edge from i to j
                         current[i][j] = value2 + value1
 
-        D[len(D)-1] = numpy.mat(current)
+        D[len(D) - 1] = numpy.mat(current)
     print "APSP (k=%d):" % k
-    printGraph(D[len(D)-1])
-    return D[len(D)-1]
+    print_graph(D[len(D) - 1])
+    return D[len(D) - 1]
 
 
-def printGraph(G):
+def print_graph(G):
     for row in G:
         print row
-
-#
-# x = 0
-# G = [[0, 1, 0, 0],
-#      [1, 0, 1, 0],
-#      [0, 1, 0, 1],
-#      [0, 0, 1, 0]]
-#
-# # G = [
-#     [0,1,0],
-#     [1,0,1],
-#     [0,1,0],
-# ]
-# Find_Geodesic_Distances(numpy.mat(G))
 
 sparse_subspace_communities_with_fusion('./data/football.gml', 10)
