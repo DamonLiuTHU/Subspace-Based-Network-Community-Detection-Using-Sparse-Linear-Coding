@@ -33,7 +33,7 @@ class Dijkstra():
                     self.S[position - 1] = True
                 position = vertex + 1
             except:
-                print "Erro - Without shortest path, please check the vertex and weights"
+                print("Erro - Without shortest path, please check the vertex and weights")
                 self.S[self.end - 1] = True
 
     def calculate_weight(self, position):
