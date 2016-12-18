@@ -1,6 +1,6 @@
 from util import *
 import numpy as np
-
+import math
 A = np.array([
     [0,1,1,0,0,0],
     [1,0,1,0,0,0],
@@ -27,11 +27,24 @@ k = 2
 dataset_path = './data/football.gml'
 # dataset_path = './data/polblogs.gml'
 A = get_adjacent_matrix(dataset_path)
+print('A')
+print(A)
 P = find_geodesic_distances(A)
+print('P')
+print(P)
 S = find_sim(P)
+print('S')
+for row in S:
+    for cell in row:
+        if math.isnan(cell):
+            print(cell)
 print(S)
 F = find_linear_sparse_code(S)
+print('F')
+print(F)
 Es = find_eigen_vectors(F,k)
+print('Es')
+print(Es)
 Ea = find_eigen_vectors(A,k)
 centroid, labels, inertia = kmeans(Es,Ea = Ea, n_clusters = 2)
 print(centroid, labels, inertia )
