@@ -2,7 +2,7 @@ import numpy as np
 from scipy import linalg
 import sklearn.cluster as sc
 from sklearn import linear_model
-from networkx import *
+import networkx
 
 
 # dataset is A
@@ -21,7 +21,7 @@ def get_pol_data():
     gml = file.read('polblogs.gml').decode()  # read gml data
     # throw away bogus first line with # from mejn files
     gml = gml.split('\n')[1:]
-    G = parse_gml(gml)  # parse gml data
+    G = networkx.parse_gml(gml)  # parse gml data
     return G
 
 def find_geodesic_distances(M):
@@ -72,30 +72,26 @@ def find_geodesic_distances(M):
     P = np.array(P)
     return P
 
-
 def print_graph(G):
     for row in G:
         print(row)
 
-
 def get_data_from_file(path):
     print(path)
-    graph = nx.read_gml(path)
+    graph = networkx.nx.read_gml(path)
     return graph
 
-
 def get_adjacent_matrix(path):
-    matrix = nx.to_numpy_matrix(get_data_from_file(path))
+    matrix = networkx.nx.to_numpy_matrix(get_data_from_file(path))
     return matrix
 
 def get_adjacent_for_pol():
-    matrix = nx.to_numpy_matrix(get_pol_data())
+    matrix = networkx.nx.to_numpy_matrix(get_pol_data())
     return matrix
 
 def find_sim(P, sigma=1):
     S = np.exp(-(P * P) / (2 * sigma ** 2))
     return S
-
 
 def find_linear_sparse_code(S):
     n = np.shape(S)[0]
@@ -114,7 +110,6 @@ def find_linear_sparse_code(S):
     F = (F + np.transpose(F)) / 2
     return F
 
-
 def find_eigen_vectors(F, k):
     ds = [np.sum(row) for row in F]
     D = np.diag(ds)
@@ -126,7 +121,6 @@ def find_eigen_vectors(F, k):
     keys = sorted(vals.keys())
     E = np.array([vals[i] for i in keys[1:k]]).transpose()
     return E
-
 
 def kmeans(Es, Ea=None, n_clusters=2):
     E = Es

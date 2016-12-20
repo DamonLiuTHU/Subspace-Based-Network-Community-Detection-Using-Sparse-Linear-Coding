@@ -25,11 +25,14 @@ F = np.array([
 k = 2
 # dataset_path = './data/karate.gml'
 dataset_path = './data/football.gml'
-# dataset_path = './data/polblogs.gml'
 A = get_adjacent_matrix(dataset_path)
+# A = get_adjacent_for_pol()
 print('A')
-print(A)
+print(type(A))
+A = np.array(A)
+
 P = find_geodesic_distances(A)
+
 print('P')
 print(P)
 S = find_sim(P)
