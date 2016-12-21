@@ -15,6 +15,8 @@ def test(dataset_path, sigma):
 
 
 import zipfile
+
+
 def get_pol_data():
     path = './data/polblogs.zip'
     file = zipfile.ZipFile(path)
@@ -23,6 +25,7 @@ def get_pol_data():
     gml = gml.split('\n')[1:]
     G = networkx.parse_gml(gml)  # parse gml data
     return G
+
 
 def find_geodesic_distances(M):
     """
@@ -72,26 +75,32 @@ def find_geodesic_distances(M):
     P = np.array(P)
     return P
 
+
 def print_graph(G):
     for row in G:
         print(row)
+
 
 def get_data_from_file(path):
     print(path)
     graph = networkx.nx.read_gml(path)
     return graph
 
+
 def get_adjacent_matrix(path):
     matrix = networkx.nx.to_numpy_matrix(get_data_from_file(path))
     return matrix
+
 
 def get_adjacent_for_pol():
     matrix = networkx.nx.to_numpy_matrix(get_pol_data())
     return matrix
 
+
 def find_sim(P, sigma=1):
     S = np.exp(-(P * P) / (2 * sigma ** 2))
     return S
+
 
 def find_linear_sparse_code(S):
     n = np.shape(S)[0]
@@ -110,6 +119,7 @@ def find_linear_sparse_code(S):
     F = (F + np.transpose(F)) / 2
     return F
 
+
 def find_eigen_vectors(F, k):
     ds = [np.sum(row) for row in F]
     D = np.diag(ds)
@@ -122,6 +132,7 @@ def find_eigen_vectors(F, k):
     E = np.array([vals[i] for i in keys[1:k]]).transpose()
     return E
 
+
 def kmeans(Es, Ea=None, n_clusters=2):
     E = Es
     if Ea is not None:
@@ -129,3 +140,64 @@ def kmeans(Es, Ea=None, n_clusters=2):
     if (np.sum(E.imag)) > 0: print('the egin is complex number')
     centroid, labels, inertia = sc.k_means(E.real, n_clusters=n_clusters)
     return centroid, labels, inertia
+
+
+def get_football_label():
+    dataset_path = './data/football.gml'
+    G = get_data_from_file(dataset_path)
+    dic = {}
+    # 0(left or liberal)
+    # 1(right or conservative)
+    label = []
+    for v in G:
+        label.append(G.node[v]['value'])
+    label_set = set(label)
+    counter = 0
+    for tmp_label in label_set:
+        dic[tmp_label] = counter
+        counter += 1
+    label = []
+    for v in G:
+        label.append(dic[G.node[v]['value']])
+    return label, dic
+
+
+def get_pol_label():
+    path = './data/polblogs.zip'
+    file = zipfile.ZipFile(path)
+    gml = file.read('polblogs.gml').decode()  # read gml data
+    # throw away bogus first line with # from mejn files
+    gml = gml.split('\n')[1:]
+    G = networkx.parse_gml(gml)  # parse gml data
+    dic = {}
+    # 0(left or liberal)
+    # 1(right or conservative)
+    label = []
+    label_set = []
+    for v in G:
+        label.append(G.node[v]['value'])
+    label_set = set(label)
+    counter = 0
+    for tmp_label in label_set:
+        dic[tmp_label] = counter
+        counter += 1
+    label = []
+    for v in G:
+        label.append(dic[G.node[v]['value']])
+    return label, dic
+
+
+def get_karate_label():
+    import networkx as nx
+    G = nx.karate_club_graph()
+    print("Node Degree")
+    dic = {"Mr. Hi": 0, "Officer": 1}
+    label = []
+    for v in G:
+        # print('%s %s' % (v, dic[G.node[v]['club']]))
+        label.append(dic[G.node[v]['club']])
+    return label, dic
+
+
+label, dic = get_football_label()
+print(label, dic)
