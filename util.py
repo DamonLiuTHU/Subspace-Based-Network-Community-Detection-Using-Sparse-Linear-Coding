@@ -3,8 +3,8 @@ from scipy import linalg
 import sklearn.cluster as sc
 from sklearn import linear_model
 import networkx
-
-
+from sklearn.metrics import normalized_mutual_info_score
+import zipfile
 # dataset is A
 def test(dataset_path, sigma):
     matrix = get_adjacent_matrix(dataset_path)
@@ -13,8 +13,6 @@ def test(dataset_path, sigma):
     S = (np.exp(-(P * P) / (2 * sigma ** 2)))
     return S
 
-
-import zipfile
 def get_pol_data():
     path = './data/polblogs.zip'
     file = zipfile.ZipFile(path)
@@ -89,7 +87,7 @@ def get_adjacent_for_pol():
     matrix = networkx.nx.to_numpy_matrix(get_pol_data())
     return matrix
 
-def find_sim(P, sigma=1):
+def find_sim(P, sigma=10):
     S = np.exp(-(P * P) / (2 * sigma ** 2))
     return S
 
@@ -98,7 +96,7 @@ def find_linear_sparse_code(S):
     F = np.zeros([n, n])
     for i in range(n):
         Sh = np.column_stack((S[:, :i], np.zeros([n, 1]), S[:, i + 1:]))
-        lasso = linear_model.Lasso(alpha=0.05, fit_intercept=False)
+        lasso = linear_model.Lasso(alpha=0.005, fit_intercept=False)
         lasso.fit(Sh, S[:, i])
         w = lasso.coef_ / sum(lasso.coef_)
         F[i, :] = F[i, :] + w
@@ -110,27 +108,29 @@ def find_linear_sparse_code(S):
     F = (F + np.transpose(F)) / 2
     return F
 
-def find_eigen_vectors(F, k):
+def find_eigen_vectors(F):
     ds = [np.sum(row) for row in F]
     D = np.diag(ds)
     Dn = np.power(np.linalg.matrix_power(D, -1), 0.5)
     L = np.identity(len(F)) - (Dn.dot(F)).dot(Dn)
-
     evals, evcts = linalg.eig(L)
+    return evals, evcts
+
+def find_k_eigen_vetors(evals, evcts,k):
     vals = dict(zip(evals, evcts.transpose()))
     keys = sorted(vals.keys())
     E = np.array([vals[i] for i in keys[1:k]]).transpose()
     return E
 
-def kmeans(Es, Ea=None, n_clusters=2):
+def kmeans(Es, real_label, Ea=None, n_clusters=2,):
     E = Es
     if Ea is not None:
         E = (np.concatenate((Es.T, Ea.T))).T
     if (np.sum(E.imag)) > 0: print('the egin is complex number')
-    print(E)
+    # print(E)
     centroid, labels, inertia, best_n_iter = sc.k_means(E.real, n_clusters=n_clusters,return_n_iter=True)
-    return centroid, labels, inertia, best_n_iter
-
+    nmi = normalized_mutual_info_score(real_label, labels)
+    return centroid, labels, inertia, best_n_iter, nmi
 
 def get_football_label():
     dataset_path = './data/football.gml'
@@ -150,7 +150,6 @@ def get_football_label():
     for v in G:
         label.append(dic[G.node[v]['value']])
     return label, dic
-
 
 def get_pol_label():
     path = './data/polblogs.zip'
@@ -176,7 +175,6 @@ def get_pol_label():
         label.append(dic[G.node[v]['value']])
     return label, dic
 
-
 def get_karate_label():
     import networkx as nx
     G = nx.karate_club_graph()
@@ -187,7 +185,3 @@ def get_karate_label():
         # print('%s %s' % (v, dic[G.node[v]['club']]))
         label.append(dic[G.node[v]['club']])
     return label, dic
-
-
-label, dic = get_football_label()
-print(label, dic)
