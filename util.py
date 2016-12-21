@@ -5,6 +5,14 @@ from sklearn import linear_model
 import networkx
 from sklearn.metrics import normalized_mutual_info_score
 import zipfile
+import time
+
+def current_time():
+    return time.time()
+def cost_times(start,step):
+    end = time.time()
+    print(step + '--->' + str((end - start)))
+    return end
 # dataset is A
 def test(dataset_path, sigma):
     matrix = get_adjacent_matrix(dataset_path)

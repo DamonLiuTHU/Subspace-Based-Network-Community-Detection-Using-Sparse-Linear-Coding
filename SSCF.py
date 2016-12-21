@@ -25,6 +25,8 @@ F = np.array([
     [0.00,0.00,0.00,0.88,1.00,0.00]])
 '''
 
+start = current_time()
+
 # dataset karate
 # dataset_path = './data/karate.gml'
 # A = get_adjacent_matrix(dataset_path)
@@ -38,17 +40,18 @@ F = np.array([
 # dataset pol
 A = get_adjacent_for_pol()
 real_label,dic = get_pol_label()
-print('A')
+
+start = cost_times(start,'A')
 A = np.array(A)
 P = find_geodesic_distances(A)
-print('P')
+start = cost_times(start,'P')
 S = find_sim(P)
-print('S')
+start = cost_times(start,'S')
 F = find_linear_sparse_code(S)
-print('F')
+start = cost_times(start,'F')
 evals_s, evcts_s = find_eigen_vectors(F)
 evals_a, evcts_a = find_eigen_vectors(A)
-print('get all eigen_vectors')
+start = cost_times(start,'get all eigen_vectors')
 
 def k_means_2(k=2):
     Es = find_k_eigen_vetors(evals_s, evcts_s, k)
@@ -68,5 +71,7 @@ def k_means_ite(k,norm_error_2):
     print(nmi)
     return labels, nmi, normlized_error, best_n_iter
 norm_error_2 = k_means_2()
-for k in range(2,16):
+start = cost_times(start,'get norm_error_2')
+for k in range(2,20):
     k_means_ite(k,norm_error_2)
+    start = cost_times(start,'one iter')
