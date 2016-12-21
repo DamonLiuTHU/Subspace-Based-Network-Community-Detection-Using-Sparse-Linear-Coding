@@ -98,7 +98,7 @@ def find_linear_sparse_code(S):
     F = np.zeros([n, n])
     for i in range(n):
         Sh = np.column_stack((S[:, :i], np.zeros([n, 1]), S[:, i + 1:]))
-        lasso = linear_model.Lasso(alpha=0.01, fit_intercept=False)
+        lasso = linear_model.Lasso(alpha=0.05, fit_intercept=False)
         lasso.fit(Sh, S[:, i])
         w = lasso.coef_ / sum(lasso.coef_)
         F[i, :] = F[i, :] + w
@@ -130,3 +130,64 @@ def kmeans(Es, Ea=None, n_clusters=2):
     print(E)
     centroid, labels, inertia, best_n_iter = sc.k_means(E.real, n_clusters=n_clusters,return_n_iter=True)
     return centroid, labels, inertia, best_n_iter
+
+
+def get_football_label():
+    dataset_path = './data/football.gml'
+    G = get_data_from_file(dataset_path)
+    dic = {}
+    # 0(left or liberal)
+    # 1(right or conservative)
+    label = []
+    for v in G:
+        label.append(G.node[v]['value'])
+    label_set = set(label)
+    counter = 0
+    for tmp_label in label_set:
+        dic[tmp_label] = counter
+        counter += 1
+    label = []
+    for v in G:
+        label.append(dic[G.node[v]['value']])
+    return label, dic
+
+
+def get_pol_label():
+    path = './data/polblogs.zip'
+    file = zipfile.ZipFile(path)
+    gml = file.read('polblogs.gml').decode()  # read gml data
+    # throw away bogus first line with # from mejn files
+    gml = gml.split('\n')[1:]
+    G = networkx.parse_gml(gml)  # parse gml data
+    dic = {}
+    # 0(left or liberal)
+    # 1(right or conservative)
+    label = []
+    label_set = []
+    for v in G:
+        label.append(G.node[v]['value'])
+    label_set = set(label)
+    counter = 0
+    for tmp_label in label_set:
+        dic[tmp_label] = counter
+        counter += 1
+    label = []
+    for v in G:
+        label.append(dic[G.node[v]['value']])
+    return label, dic
+
+
+def get_karate_label():
+    import networkx as nx
+    G = nx.karate_club_graph()
+    print("Node Degree")
+    dic = {"Mr. Hi": 0, "Officer": 1}
+    label = []
+    for v in G:
+        # print('%s %s' % (v, dic[G.node[v]['club']]))
+        label.append(dic[G.node[v]['club']])
+    return label, dic
+
+
+label, dic = get_football_label()
+print(label, dic)
