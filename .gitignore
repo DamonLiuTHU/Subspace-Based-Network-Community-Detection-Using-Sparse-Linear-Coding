@@ -8,4 +8,6 @@
 /out
 *.ipynb
 /.ipy*
+/test.py
+/format
 

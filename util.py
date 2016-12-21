@@ -98,7 +98,7 @@ def find_linear_sparse_code(S):
     F = np.zeros([n, n])
     for i in range(n):
         Sh = np.column_stack((S[:, :i], np.zeros([n, 1]), S[:, i + 1:]))
-        lasso = linear_model.Lasso(alpha=0.05, fit_intercept=False)
+        lasso = linear_model.Lasso(alpha=0.01, fit_intercept=False)
         lasso.fit(Sh, S[:, i])
         w = lasso.coef_ / sum(lasso.coef_)
         F[i, :] = F[i, :] + w
@@ -127,5 +127,6 @@ def kmeans(Es, Ea=None, n_clusters=2):
     if Ea is not None:
         E = (np.concatenate((Es.T, Ea.T))).T
     if (np.sum(E.imag)) > 0: print('the egin is complex number')
-    centroid, labels, inertia = sc.k_means(E.real, n_clusters=n_clusters)
-    return centroid, labels, inertia
+    print(E)
+    centroid, labels, inertia, best_n_iter = sc.k_means(E.real, n_clusters=n_clusters,return_n_iter=True)
+    return centroid, labels, inertia, best_n_iter
